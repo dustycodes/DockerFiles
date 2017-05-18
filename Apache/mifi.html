@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<!-- saved from url=(0031)http://192.168.1.1/diagnostics/ -->
+<html class=" js borderradius boxshadow textshadow" lang="en-US"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>MiFi U620L</title>
+		<link rel="stylesheet" type="text/css" href="./mifi_files/fonts.css">
+<link rel="stylesheet" type="text/css" href="./mifi_files/reset.css">
+
+
+	
+
+
+<link rel="stylesheet" type="text/css" href="./mifi_files/layout.css">
+<link rel="stylesheet" type="text/css" href="./mifi_files/style.css">
+<link rel="stylesheet" type="text/css" href="./mifi_files/status.css">
+<link rel="stylesheet" type="text/css" href="./mifi_files/messages.css">
+<link rel="stylesheet" type="text/css" href="./mifi_files/form.css">
+<link rel="stylesheet" type="text/css" href="./mifi_files/uniform.css">
+
+
+<link rel="stylesheet" type="text/css" href="./mifi_files/mobile_768.css" media="screen and (max-width: 768px)">
+<link rel="stylesheet" type="text/css" href="./mifi_files/mobile_480.css" media="screen and (max-width: 480px)">
+<link rel="stylesheet" type="text/css" href="./mifi_files/mobile_320.css" media="screen and (max-width: 320px)">
+
+
+<link rel="stylesheet" type="text/css" href="./mifi_files/last.css">
+
+		
+<script type="text/javascript" src="./mifi_files/modernizr.min.js.download"></script>
+
+<script type="text/javascript" src="./mifi_files/jquery.js.download"></script>
+
+<script type="text/javascript" src="./mifi_files/jquery-ui.min.js.download"></script>
+
+<script type="text/javascript" src="./mifi_files/mifienums.js.download"></script>
+<script type="text/javascript" src="./mifi_files/modalPopup.min.js.download"></script>
+
+<script type="text/javascript" src="./mifi_files/jquery.uniform.min.js.download"></script>
+<script type="text/javascript" src="./mifi_files/sha.min.js.download"></script>
+<script type="text/javascript" src="./mifi_files/jquery.slidebutton.min.js.download"></script>
+<script type="text/javascript" src="./mifi_files/jquery.statusbar.min.js.download"></script>
+<script type="text/javascript" src="./mifi_files/notifications.js.download"></script>
+
+
+<script type="text/javascript">
+	/* <![CDATA[ */
+	// Init status bar
+	$.statusBar({
+		statusBars : {
+			headerStatusBar : {
+				name : "headerStatusBar",
+				structure : {
+					statusBar_carrier_grp : {
+						statusBar_network : ["statusBarNetwork", "statusBarNetworkID"]
+					},
+					statusBar_roamingFemto_grp : {
+						statusBar_femto_roam : ["statusBarFemtoCellStatus", "statusBarRoaming"]
+					},
+					statusBar_tech_grp : {
+						statusBar_tech : ["statusBarTechnology", "statusBarTechnologyText"]
+					},
+					statusBar_activity_grp : {
+						statusBar_activity : ["statusBarTrafficStatus"]
+					},
+					statusBar_sim_grp : {
+						statusBar_sim : ["statusBarSimStatus", "statusBarSimCarrierBlockedStatus", "statusBarConnectionState"]
+					},
+					statusBar_network_grp : {
+						statusBar_rssi : ["statusBarSignalBars"]
+					}
+				}
+			},
+			mobileStatusBar : {
+				name : "mobileStatusBar",
+				structure : {
+					mobile_statusBar_carrier_grp : {
+						mobile_statusBar_network : ["mobileStatusBarNetwork", "mobileStatusBarNetworkID"]
+					},
+					mobile_statusBar_roamingFemto_grp : {
+						mobile_statusBar_femto_roam : ["statusBarFemtoCellStatus", "statusBarRoaming"]
+					},
+					mobile_statusBar_tech_grp : {
+						mobile_statusBar_tech : ["statusBarTechnology", "statusBarTechnologyText"]
+					},
+					mobile_statusBar_activity_grp : {
+						mobile_statusBar_activity : ["statusBarTrafficStatus"]
+					},
+					mobile_statusBar_sim_grp : {
+						mobile_statusBar_sim : ["statusBarSimStatus", "statusBarSimCarrierBlockedStatus", "statusBarConnectionState"]
+					},
+					mobile_statusBar_network_grp : {
+						mobile_statusBar_rssi : ["statusBarSignalBars"]
+					}
+				}
+			}
+		},
+		simNoSimText    : 'No SIM',
+		simPinLockedText: 'SIM is PIN locked',
+		simPukLockedText: 'SIM is PUK locked',
+		simInvalidText  : 'Invalid SIM',
+		simErrorText    : 'SIM error',
+		wanNoServiceText: 'No Service',
+		wanSearchingText: 'Searching',
+		successCallback : statusBarSuccess,
+		errorCallback   : statusBarError,
+		timeoutCallback	: statusBarError,
+		errorMax        : 3
+	});
+
+	
+
+	// statusBar ajax success callback.
+	function statusBarSuccess()
+	{
+		
+	}
+
+	// statusBar ajax error/timeout callback.
+	function statusBarError()
+	{
+		if (typeof notifications !== "undefined") notifications.showMiFiUnreachableMessage();
+		
+	}
+
+	// Open and close mobile slide out panels.
+	function toggleMobilePanels($el, scrollToTop)
+	{
+		if (typeof scrollToTop === "undefined") scrollToTop = false;
+		var $otherPanels = $(".mobile_panel").not($el);
+		var panelWidth = "-" + $el.outerWidth(true) + "px";
+		if ($("html").hasClass("rtl")) {
+			var cssOptions = { "left" : panelWidth, "display" : "block" };
+			var animOptionsShow = { "left" : "0px" };
+			var animOptionsHide = { "left" : panelWidth };
+		} else {
+			var cssOptions = { "right" : panelWidth, "display" : "block" };
+			var animOptionsShow = { "right" : "0px" };
+			var animOptionsHide = { "right" : panelWidth };
+		}
+		if ($el.is(":hidden")) {
+			$el.css(cssOptions);
+			setTimeout(function(){
+				$el.animate(animOptionsShow, {
+					duration: 150,
+					complete : function(){
+						closeMobilePanels($otherPanels, scrollToTop);
+					}
+				});
+			}, 20);
+		} else {
+			$el.animate(animOptionsHide, {
+				duration: 150,
+				complete : function(){
+					setTimeout(function(){
+						$el.hide(0);
+					}, 20);
+					closeMobilePanels($otherPanels, scrollToTop);
+				}
+			});
+		}
+	}
+
+	// Close mobile slide out panels.
+	function closeMobilePanels($el, scrollToTop)
+	{
+		$el.each(function(i) {
+			var $myEl = $(this);
+			if (!$myEl.is(":hidden")) {
+				var panelWidth = "-" + $myEl.outerWidth(true) + "px";
+				if ($("html").hasClass("rtl")) {
+					var animOptionsHide = { "left" : panelWidth };
+				} else {
+					var animOptionsHide = { "right" : panelWidth };
+				}
+				$myEl.animate(animOptionsHide, {
+					duration: 150,
+					complete : function(){
+						setTimeout(function(){
+							$myEl.hide(0);
+							if (scrollToTop) window.scrollTo(0, 0);
+						}, 20);
+					}
+				});
+			}
+		});
+	}
+
+	// For tables that are wider than the display, we need to be able to scroll the table horizontally.
+	// This function works with a div wrapped around a table. This div uses the class "wideTableWrapper".
+	// The wrapper div needs to determine its width dynamically. This function determines this width based on the parent div.
+	function adjustWideTableWrap($wrapper, $parent)
+	{
+		var ws = $(window).width();
+		$wrapper.width($parent.width());
+		$(window).on("resize", function() {
+			if ( ws != $(window).width() ) {
+				ws = $(window).width();
+				$wrapper.width($parent.width());
+			}
+		});
+	}
+
+	$(function()
+	{
+		// Determine wideTableWrap div width dynamically.
+		adjustWideTableWrap($("div.wideTableWrap"), $("div.wideTableWrap").parents("div"));
+
+		// Add status bars to page
+		$("#status_bar").statusBar("attach", "headerStatusBar");
+		$("#mobile_status_bar").statusBar("attach", "mobileStatusBar");
+
+		// Open and close mobile menu panel.
+		$("#toggle_mobile_menu").on("click", function(e) {
+			toggleMobilePanels($("#mobile_menu"));
+			$(this).toggleClass("opened closed");
+		});
+
+		// Close Mobile Panels when help link is clicked.
+		$("#mobile_menu .helpLink").on("click", function(e) {
+			e.preventDefault();
+			closeMobilePanels($("#mobile_menu"), false);
+			$("#toggle_mobile_menu").removeClass("opened closed").addClass("closed");
+		});
+
+		// Close mobile panels when clicking outside of them.
+		$(document).on("click", function(e) {
+			var container = $(".mobile");
+			if (!container.is(e.target) // if the target of the click isn't the container...
+				&& container.has(e.target).length === 0) // ... nor a descendant of the container
+			{
+				closeMobilePanels($("#mobile_menu"), false);
+				$("#toggle_mobile_menu").removeClass("opened closed").addClass("closed");
+			}
+		});
+
+		// Hide mobile menu on window width resize, in case the menu is visible when the user changes orientation.
+		var windowsize = $(window).width();
+		$(window).on("resize", function() {
+			if (windowsize != $(window).width()) {
+				$("#mobile_menu").hide(0);
+				$("#toggle_mobile_menu").removeClass("opened closed").addClass("closed");
+				windowsize = $(window).width();
+			}
+		});
+
+		// Menu Accordion.
+		$("#mobile_navigation a.parent").on("click", function(e) {
+			e.preventDefault();
+			var closer = ($("html").hasClass("rtl")) ? "left" : "right";
+			var $icon = $(this).find("span.indicator");
+			var $target = $(this).next("ul");
+			var level = $target.attr("class");
+			var $siblings = $(this).closest("ul").find("ul." + level);
+			if ($target.is(":visible")) {
+				$icon.removeClass("down active").addClass(closer);
+				$target.slideUp();
+			} else {
+				$siblings.prev("a.parent").find("span.indicator").removeClass("down active").addClass(closer);
+				$siblings.not($target).slideUp(400, function() {
+					$icon.removeClass(closer + " active").addClass("down");
+					$target.slideDown();
+				});
+			}
+		});
+
+		// Uniform Init -- We're using Uniform 2+.
+		if(jQuery.uniform) {
+			$.uniform.defaults.fileButtonHtml = 'Browse';
+			$.uniform.defaults.fileDefaultHtml = 'No file selected';
+
+			var uniEl = "select, textarea, input:not(.toggleSettingContainer input:checkbox)";
+			$.uniform.defaults.filter = uniEl
+
+			$(uniEl).uniform({
+				selectAutoWidth : false,
+				resetSelector : 'input[type="reset"]'
+			});
+
+			// If using uniform on buttons, we need to add the button element class to the div wrapper.
+			$("button.primary").closest("div.button").addClass("primary");
+			$("button.secondary").closest("div.button").addClass("secondary");
+			$("button.multi").closest("div.button").addClass("multi");
+			$("button.cancel").closest("div.button").addClass("cancel");
+
+			// If using uniform on file uploader input, we need to add the error class to the div.uploader wrapper.
+			$('input[type="file"].error').closest("div.uploader").addClass("error");
+		}
+
+		// If Internet Explorer is in compatibility mode or IE7, display a warning.
+		if( (navigator.userAgent.indexOf("MSIE 7.0") > -1)
+			|| ( (document.documentMode) && (document.documentMode == 7) ) ) {
+			modalPopup.createWindow(
+				'Browser Compatibility Warning',
+				'<p>The Jetpack MiFi USB620L web interface does not support Internet Explorer 7 or Compatibility Mode. Either upgrade your browser or turn Compatibility Mode off.</p>',
+				430, 300,
+				[
+					{
+						text : 'OK',
+						className : "primary"
+					}
+				]
+			);
+		}
+
+		// Open all external links in a new window.
+		$('a[href^="http"]').on("click", function(e) {
+			e.preventDefault();
+			window.open($(this).attr("href"));
+		});
+
+		// Add events to all of our help links to open a modal popup displaying help information
+		$("a.helpLink, a.helpBtn, a.helpAnchor").on("click", function(e) {
+			e.preventDefault();
+			// Add an element for help
+			var url = $(this).attr("href");
+			var loadUrl = url.replace(/#/, " #");
+			var hw = $('<div id="help_wrapper"></div>').appendTo('body').load(loadUrl, function(response, status, xhr) {
+				if (status === "error") {
+					$(this).html('<p>Help content not found.</p>');
+				}
+
+				modalPopup.createWindow(
+					'Help',
+					$(this),
+					750, 600,
+					[],
+					null,
+					function() { hw.remove(); }
+				);
+			});
+		});
+	});
+	/* ]]> */
+</script>
+
+
+
+
+	<script type="text/javascript" src="./mifi_files/finder.js.download"></script></head>
+	<body id="status_diagnostics" class="tabbed_page">
+		<div id="container">
+			<div id="container_inner">
+				<script type="text/javascript">
+	/* <![CDATA[ */
+	var previousConnectionStatus = "";
+	var simReady = false;
+	var $waitDialog;
+	var waitTimeout;
+	var waitTimeoutSec = 45; // seconds
+
+	function waitDialog()
+	{
+		if (!$waitDialog) {
+			$waitDialog = $("<div></div>")
+				.dialog({
+					modal : true,
+					resizable : false,
+					dialogClass : "wait-dialog noTitle",
+					width : "auto",
+					height : "auto",
+					draggable : false,
+					closeOnEscape : false,
+					open : function(){
+						$(".wait-dialog").prev(".ui-widget-overlay").addClass("wait-overlay");
+					}
+				});
+		}
+
+		// Start timeout timer
+		waitTimeout = setTimeout(waitTimer, (waitTimeoutSec * 1000));
+	}
+
+	function waitTimer()
+	{
+		// If status doesn't return in waitTimeoutSec, stop, wait 2 seconds, and restart status poll.
+		if ($waitDialog && $.statusBar) $.statusBar("refresh", 2000);
+	}
+
+	function killWaitDialog()
+	{
+		clearTimeout(waitTimeout);
+		if ($waitDialog) {
+			$waitDialog.dialog("destroy").remove();
+			$waitDialog = null;
+		}
+	}
+
+	$(function()
+	{
+		$(document).ajaxSuccess(function(e, xhr, settings) {
+			if ((xhr.responseText) && (settings.dataType == "json")) {
+				try {
+						var obj = jQuery.parseJSON(xhr.responseText || "null");
+
+						if (typeof obj.statusData.statusBarSimStatus !== "undefined") {
+							switch (obj.statusData.statusBarSimStatus) {
+								case $.uiEnums.SIMSTATUS_READY:
+									simReady = true;
+									break;
+								case $.uiEnums.SIMSTATUS_NOT_FOUND:
+									$("#appsHomeNetworkStatusCol").html('No SIM');
+									toggleConnection("connect", true);
+									break;
+								case $.uiEnums.SIMSTATUS_PIN_LOCKED:
+									$("#appsHomeNetworkStatusCol").html('SIM is PIN locked');
+									toggleConnection("connect", true);
+									break;
+								case $.uiEnums.SIMSTATUS_PUK_LOCKED:
+									$("#appsHomeNetworkStatusCol").html('SIM is PUK locked');
+									toggleConnection("connect", true);
+									break;
+								case $.uiEnums.SIMSTATUS_NOT_SUPPORTED:
+									$("#appsHomeNetworkStatusCol").html('SIM error');
+									toggleConnection("connect", true);
+									break;
+								case $.uiEnums.SIMSTATUS_ERROR:
+									$("#appsHomeNetworkStatusCol").html('SIM error');
+									toggleConnection("connect", true);
+									break;
+							}
+						}
+						if (simReady) {
+							if ((typeof obj.statusData.statusBarConnectionState !== "undefined") && (previousConnectionStatus !== obj.statusData.statusBarConnectionState)) {
+								if (obj.statusData.statusBarConnectionState !== "") previousConnectionStatus = obj.statusData.statusBarConnectionState;
+								switch (obj.statusData.statusBarConnectionState) {
+									case $.uiEnums.WANSTATE_NOSERVICE:
+										$("#appsHomeNetworkStatusCol").html('No Service');
+										toggleConnection("connect", true);
+										break;
+									case $.uiEnums.WANSTATE_INITIALIZING:
+										$("#appsHomeNetworkStatusCol").html('Initializing');
+										toggleConnection("connect", true);
+										break;
+									case $.uiEnums.WANSTATE_SEARCHING:
+										$("#appsHomeNetworkStatusCol").html('Searching');
+										toggleConnection("connect", true);
+										break;
+									case $.uiEnums.WANSTATE_UNACTIVATED:
+										$("#appsHomeNetworkStatusCol").html('Unactivated');
+										toggleConnection("connect", true);
+										break;
+									case $.uiEnums.WANSTATE_IDLE:
+										$("#appsHomeNetworkStatusCol").html('Ready to connect');
+										toggleConnection("connect");
+										// Remove the wait overlay, we're disconnected.
+										killWaitDialog();
+										break;
+									case $.uiEnums.WANSTATE_CONNECTING:
+										$("#appsHomeNetworkStatusCol").html('Connecting');
+										toggleConnection("connect", true);
+										break;
+									case $.uiEnums.WANSTATE_DISCONNECTING:
+										$("#appsHomeNetworkStatusCol").html('Disconnecting');
+										toggleConnection("disconnect", true);
+										break;
+									case $.uiEnums.WANSTATE_CONNECTED:
+									case $.uiEnums.WANSTATE_DORMANT:
+										$("#appsHomeNetworkStatusCol").html(obj.statusData.statusBarConnectionState);
+										toggleConnection("disconnect");
+										// Remove the wait overlay, we're connected.
+										killWaitDialog();
+										break;
+									default:
+										$("#appsHomeNetworkStatusCol").html(obj.statusData.statusBarConnectionState);
+										toggleConnection("connect");
+										break;
+								}
+							}
+
+							if (typeof obj.statusData.statusBarRoaming !== "undefined") {
+								isRoaming = (obj.statusData.statusBarRoaming == $.uiEnums.ROAMNONE) ? false : true;
+							}
+						}
+
+						if ( (typeof obj.statusData.statusBarBytesReceived !== "undefined")
+							&& (typeof obj.statusData.statusBarBytesTransmitted !== "undefined")
+							&& (obj.statusData.statusBarBytesReceived !== "0" )
+							&& (obj.statusData.statusBarBytesTransmitted !== "0") ) {
+							var total = Number(obj.statusData.statusBarBytesReceived) + Number(obj.statusData.statusBarBytesTransmitted);
+							$("#appsHomeDataUsed").html(bytesToSize(total, 2));
+						} else {
+							$("#appsHomeDataUsed").html("");
+						}
+
+						if ( (typeof obj.statusData.statusBarConnectionDuration !== "undefined") && (obj.statusData.statusBarConnectionDuration !== "0") ) {
+							$("#appsHomeTimeConnected").html(seconds2time(obj.statusData.statusBarConnectionDuration));
+						} else {
+							$("#appsHomeTimeConnected").html("");
+						}
+				} catch(e) {}
+			}
+		});
+
+		
+			$("#connectDisconnect").on("click", function(){
+				if ((isRoaming) && (!dataConnected)) {
+					showMessagePopUp('<p>The charge for data transmitted and received while roaming can be as high as $20.48 per MB. Please check your price plan for the applicable charges in the location where you plan to access the service.<br> To check your usage, please go to the "My Verizon Wireless" link on the Home page. Data usage charges will apply for accessing this link in accordance with your price plan.</p>');
+				}
+
+				// Stop status polling to let connect or disconnect request go through at once.
+				statusStop();
+
+				// Lock down web UI while we connect or disconnect.
+				waitDialog();
+
+				if ($(this).html() === 'Connect') {
+					$("#appsHomeNetworkStatusCol").html('Connecting');
+					toggleConnection("connect", true);
+					$.get("/srv/connect").always(statusStart);
+				}	else if ($(this).html() === 'Disconnect') {
+					$("#appsHomeNetworkStatusCol").html('Disconnecting');
+					toggleConnection("disconnect", true);
+					$.get("/srv/disconnect").always(statusStart);
+				}
+			});
+		
+	});
+
+	function statusStop()
+	{
+		if ($.statusBar) $.statusBar("stop");
+	}
+
+	function statusStart()
+	{
+		if ($.statusBar) $.statusBar("start");
+	}
+
+	function bytesToSize(bytes, precision)
+	{
+		var sizes = [
+			'B',
+			'KB',
+			'MB',
+			'GB',
+			'TB'
+			];
+		var posttxt = 0;
+		if (bytes == 0) return "0";
+		while (bytes >= 1024) {
+			posttxt++;
+			bytes = bytes / 1024;
+		}
+		return Number(bytes).toFixed(precision) + " " + sizes[posttxt];
+	}
+
+	function seconds2time(seconds)
+	{
+		var days = Math.floor(seconds / 86400);
+		var hours = Math.floor((seconds - (days * 86400)) / 3600);
+		var minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
+		var seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
+		var time = "";
+
+		days = (days < 10) ? "0" + days : String(days);
+		hours = (hours < 10) ? "0" + hours : String(hours);
+		minutes = (minutes < 10) ? "0" + minutes : String(minutes);
+		if (days == "00") {
+			time += hours + " " + ((hours > "01") ? 'hrs ' : 'hr ') + minutes + " " + 'min';
+		} else {
+			time += days + " " + ((days > "01") ? 'days ' : 'day ') + hours + " " + ((hours > "01") ? 'hrs ' : 'hr ') + minutes + " " + 'min';
+		}
+
+		return time;
+	}
+
+	function toggleConnection(state, disable)
+	{
+		var disable = disable || false;
+		var str = "";
+		if (state === "connect") {
+			str = 'Connect';
+			dataConnected = false;
+		} else {
+			str = 'Disconnect';
+			dataConnected = true;
+		}
+		$("#connectDisconnect").html(str).prop("disabled", disable);
+	}
+
+	function showMessagePopUp(msg)
+	{
+		modalPopup.createWindow('Alert', msg, 430, "auto", [{
+			text : 'OK',
+			className : "primary"
+		}]);
+	}
+	/* ]]> */
+</script>
+
+
+	<div id="mobile_menu" class="mobile mobile_panel">
+		<div id="mobile_menu_inner">
+			<script type="text/javascript">
+	/* <![CDATA[ */
+	$(function()
+	{
+		// Monitor and update badge counts in menu.
+		var $navConnDev = $("#mobile_navigation li.connected-devices");
+		var $navSMS = $("#mobile_navigation li.messages");
+
+		$(document).ajaxSuccess(function(e, xhr, settings)
+		{
+			if((xhr.responseText) && (settings.dataType == "json")) {
+				try {
+					var obj = jQuery.parseJSON(xhr.responseText || "null");
+
+					if( (typeof obj.statusData.statusBarMaxPrimaryClientListSize !== "undefined")
+						&& (typeof obj.statusData.statusBarMaxGuestClientListSize !== "undefined")
+						&& (typeof obj.statusData.statusBarWiFiClientListSize !== "undefined") ) {
+						var maxPrimaryClientListSize = parseInt(obj.statusData.statusBarMaxPrimaryClientListSize);
+						var maxGuestClientListSize = parseInt(obj.statusData.statusBarMaxGuestClientListSize);
+						var clientListSize = parseInt(obj.statusData.statusBarWiFiClientListSize);
+						var primaryClientListSize = parseInt(obj.statusData.statusBarPrimaryClientListSize);
+						var guestClientListSize = parseInt(obj.statusData.statusBarGuestClientListSize);
+						var totalAllowedClients = maxPrimaryClientListSize;
+						var totalConnectedClients = primaryClientListSize;
+						if ( (typeof obj.statusData.statusGuestWifiEnabled !== "undefined" ) && (obj.statusData.statusGuestWifiEnabled > 0) ) {
+							totalAllowedClients = totalAllowedClients + maxGuestClientListSize;
+							totalConnectedClients = totalConnectedClients + guestClientListSize;
+						}
+						if (totalConnectedClients >= totalAllowedClients) {
+							updateMobileBadge($navConnDev, 'Max'); // Max
+						} else {
+							updateMobileBadge($navConnDev, obj.statusData.statusBarWiFiClientListSize);
+						}
+					}
+
+					if(typeof obj.statusData.statusBarSmsUnreadCount !== "undefined") {
+						updateMobileBadge($navSMS, obj.statusData.statusBarSmsUnreadCount);
+					}
+				} catch(e) {}
+			}
+		});
+	});
+
+	function updateMobileBadge($el, count)
+	{
+		var theCount = (count) ? count : 0;
+		var $linkWrap = $el.find(".linkWrap");
+		$linkWrap.find(".badge").remove();
+		if( (theCount > 0) || isNaN(theCount) ) {
+			$linkWrap.append('<span class="badge">' + theCount + '</span>');
+		}
+	}
+	/* ]]> */
+</script>
+
+<ul id="mobile_navigation_ext" class="level-1">
+	<li class="menuitem menu-home-mobile first">
+		<a href="http://192.168.1.1/" class="linkWrap menu-home-mobile">Home</a>
+	</li>
+</ul>
+
+
+	
+	<ul id="mobile_navigation" class="level-1">
+	<li class="menuitem menu-home first">
+		<a href="http://192.168.1.1/" class="linkWrap menu-home">
+			Home</a>
+		
+	</li>
+	
+
+	
+	
+	<li class="menuitem data-usage">
+		<a href="http://192.168.1.1/datausage/" class="linkWrap data-usage">
+			Data Usage</a>
+		
+	</li>
+	
+
+	
+	
+	<li class="menuitem settings parent">
+		<a href="http://192.168.1.1/networks/" class="linkWrap settings parent">
+			Settings<span class="indicator"></span></a>
+		
+			<ul class="level-2">
+				<li class="menuitem settings-mobile-wwan first">
+					<a href="http://192.168.1.1/networks/" class="linkWrap settings-mobile-wwan">
+						Networks</a>
+				
+				</li>
+			
+		
+			
+				<li class="menuitem settings-advanced-sim">
+					<a href="http://192.168.1.1/sim/" class="linkWrap settings-advanced-sim">
+						SIM</a>
+				
+				</li>
+			
+		
+			
+				<li class="menuitem status-updates">
+					<a href="http://192.168.1.1/softwareupdate/" class="linkWrap status-updates">
+						Software Update</a>
+				
+				</li>
+			
+		
+			
+				<li class="menuitem settings-advanced parent last">
+					<a href="http://192.168.1.1/advanced/" class="linkWrap settings-advanced parent">
+						Advanced<span class="indicator"></span></a>
+				
+					<ul class="level-3">
+						<li class="menuitem settings-advanced-metcalf-advanced first">
+							<a href="http://192.168.1.1/advanced/" class="linkWrap settings-advanced-metcalf-advanced">Advanced</a>
+						</li>
+					
+				
+					
+						<li class="menuitem settings-advanced-all last">
+							<a href="http://192.168.1.1/advsettings/" class="linkWrap settings-advanced-all"> </a>
+						</li>
+					</ul>
+				
+				</li>
+			</ul>
+		
+	</li>
+	
+
+	
+	
+	<li class="menuitem gps">
+		<a href="http://192.168.1.1/gps/" class="linkWrap gps">
+			GPS</a>
+		
+	</li>
+	
+
+	
+	
+	<li class="menuitem messages">
+		<a href="http://192.168.1.1/messages/" class="linkWrap messages">
+			Messages</a>
+		
+	</li>
+	
+
+	
+	
+	<li class="menuitem about parent active">
+		<a href="http://192.168.1.1/internet/" class="linkWrap about parent">
+			About<span class="indicator active"></span></a>
+		
+			<ul class="level-2">
+				<li class="menuitem status-current first">
+					<a href="http://192.168.1.1/internet/" class="linkWrap status-current">
+						Internet Status</a>
+				
+				</li>
+			
+		
+			
+				<li class="menuitem status-info">
+					<a href="http://192.168.1.1/deviceinfo/" class="linkWrap status-info">
+						Device  Info</a>
+				
+				</li>
+			
+		
+			
+				<li class="menuitem status-diagnostics">
+					<a href="http://192.168.1.1/diagnostics/" class="linkWrap status-diagnostics active">
+						Diagnostics</a>
+				
+				</li>
+			
+		
+			
+				<li class="menuitem status-logs last">
+					<a href="http://192.168.1.1/logs/" class="linkWrap status-logs">
+						Troubleshooting Logs</a>
+				
+				</li>
+			</ul>
+		
+	</li>
+	
+
+	
+	
+	<li class="menuitem help parent last">
+		<a href="http://192.168.1.1/faq/" class="linkWrap help parent">
+			Help<span class="indicator"></span></a>
+		
+			<ul class="level-2">
+				<li class="menuitem status-faq first">
+					<a href="http://192.168.1.1/faq/" class="linkWrap status-faq">
+						FAQ</a>
+				
+				</li>
+			
+		
+			
+				<li class="menuitem status-support last">
+					<a href="http://192.168.1.1/support/" class="linkWrap status-support">
+						Support</a>
+				
+				</li>
+			</ul>
+		
+	</li>
+	</ul><!-- /#mobile-navigation -->
+
+
+		</div>
+	</div> <!-- /#mobile_menu-->
+
+
+<div id="header">
+	<div id="header_inner" class="clearfix">
+		<a id="carrier_logo" href="http://192.168.1.1/" title="Return to MiFi U620L Home">
+			<img src="./mifi_files/verizon_wireless.png" alt="Verizon Wireless">
+		</a>
+
+		<!-- Connection Status -->
+		<div class="table" id="connection_status">
+			<div class="row clearfix">
+				<div class="col label">
+					Network Status: 
+				</div>
+				<div class="col textCol" id="appsHomeNetworkStatusCol">Connected</div>
+				
+				<div class="col submitCol" id="connectDisconnectCol">
+					<button type="button" class="primary" id="connectDisconnect">Disconnect</button>
+				</div>
+				
+			</div><!-- /.row -->
+
+			<div class="row clearfix">
+				<div class="col label">
+					Session Time: 
+				</div>
+				<div class="col textCol" id="appsHomeTimeConnected">00 hr 02 min</div>
+			</div><!-- /.row -->
+
+			<div class="row clearfix">
+				<div class="col label">
+					Session Data: 
+				</div>
+				<div class="col textCol" id="appsHomeDataUsed">73.74 KB</div>
+			</div><!-- /.row -->
+		</div><!-- /#connection_status -->
+
+		<!-- Status Bar -->
+		<div id="status_area">
+			<div id="status_bar" class="clearfix"><ul id="statusBar_carrier_grp" class="status clearfix" style=""><li id="item_statusBar_network"><span id="statusBar_network" style="" class="text network_name">Verizon Wireless</span></li></ul><ul id="statusBar_roamingFemto_grp" class="status clearfix" style=""><li id="item_statusBar_femto_roam"><span id="statusBar_femto_roam" style="" class="femto_roam_none"></span></li></ul><ul id="statusBar_tech_grp" class="status clearfix" style=""><li id="item_statusBar_tech"><span id="statusBar_tech" style="" class="tech_4glte"></span></li></ul><ul id="statusBar_activity_grp" class="status clearfix" style=""><li id="item_statusBar_activity"><span id="statusBar_activity" style="" class="activity_none"></span></li></ul><ul id="statusBar_sim_grp" class="status clearfix" style="display: none;"><li id="item_statusBar_sim" style="display: none;"><span id="statusBar_sim" style=""></span></li></ul><ul id="statusBar_network_grp" class="status clearfix" style=""><li id="item_statusBar_rssi"><span id="statusBar_rssi" style="" class="rssi_3"></span></li></ul></div>
+		</div><!-- /#status_area -->
+
+		<!-- Mobile Status Bar -->
+		<div id="mobile_status_area" class="status clearfix">
+			<div id="mobile_status_area_inner">
+				<ul id="header_mobile_menu" class="status clearfix">
+					
+						<li class="mobile">
+							<a id="toggle_mobile_menu" class="closed" href="http://192.168.1.1/diagnostics/#">menu</a>
+						</li>
+					
+				</ul>
+				<div id="mobile_status_bar" class="clearfix"><ul id="mobile_statusBar_carrier_grp" class="status clearfix" style=""><li id="item_mobile_statusBar_network"><span id="mobile_statusBar_network" style="" class="text network_name">Verizon Wireless</span></li></ul><ul id="mobile_statusBar_roamingFemto_grp" class="status clearfix" style=""><li id="item_mobile_statusBar_femto_roam"><span id="mobile_statusBar_femto_roam" style="" class="femto_roam_none"></span></li></ul><ul id="mobile_statusBar_tech_grp" class="status clearfix" style=""><li id="item_mobile_statusBar_tech"><span id="mobile_statusBar_tech" style="" class="tech_4glte"></span></li></ul><ul id="mobile_statusBar_activity_grp" class="status clearfix" style=""><li id="item_mobile_statusBar_activity"><span id="mobile_statusBar_activity" style="" class="activity_none"></span></li></ul><ul id="mobile_statusBar_sim_grp" class="status clearfix" style="display: none;"><li id="item_mobile_statusBar_sim" style="display: none;"><span id="mobile_statusBar_sim" style=""></span></li></ul><ul id="mobile_statusBar_network_grp" class="status clearfix" style=""><li id="item_mobile_statusBar_rssi"><span id="mobile_statusBar_rssi" style="" class="rssi_3"></span></li></ul></div>
+			</div>
+		</div> <!-- /#mobile_status_area-->
+	</div><!-- /#header-inner -->
+</div><!-- /#header -->
+
+<div class="notifications_wrapper global" style="display: block;"><div class="notification global critical"><div class="notification_inner clearfix"><h3 class="title"> : </h3><p class="message aftertitle">MiFi U620L is not responding, please check, remove and reinsert it if necessary.</p></div></div></div>
+
+
+				<div id="main" role="main">
+					<div id="main_inner" class="clearfix">
+
+						<div id="sidebar" class="left">
+							<div id="sidebar_inner">
+								<script type="text/javascript">
+	/* <![CDATA[ */
+	$(function()
+	{
+		// Monitor and update badge counts in menu.
+		var $navConnDev = $("#navigation li.connected-devices");
+		var $navSMS = $("#navigation li.messages");
+
+		$(document).ajaxSuccess(function(e, xhr, settings)
+		{
+			if((xhr.responseText) && (settings.dataType == "json")) {
+				try {
+					var obj = jQuery.parseJSON(xhr.responseText || "null");
+
+					if( (typeof obj.statusData.statusBarMaxPrimaryClientListSize !== "undefined")
+						&& (typeof obj.statusData.statusBarMaxGuestClientListSize !== "undefined")
+						&& (typeof obj.statusData.statusBarWiFiClientListSize !== "undefined") ) {
+						var maxPrimaryClientListSize = parseInt(obj.statusData.statusBarMaxPrimaryClientListSize);
+						var maxGuestClientListSize = parseInt(obj.statusData.statusBarMaxGuestClientListSize);
+						var clientListSize = parseInt(obj.statusData.statusBarWiFiClientListSize);
+						var primaryClientListSize = parseInt(obj.statusData.statusBarPrimaryClientListSize);
+						var guestClientListSize = parseInt(obj.statusData.statusBarGuestClientListSize);
+						var totalAllowedClients = maxPrimaryClientListSize;
+						var totalConnectedClients = primaryClientListSize;
+						if ( (typeof obj.statusData.statusGuestWifiEnabled !== "undefined" ) && (obj.statusData.statusGuestWifiEnabled > 0) ) {
+							totalAllowedClients = totalAllowedClients + maxGuestClientListSize;
+							totalConnectedClients = totalConnectedClients + guestClientListSize;
+						}
+						if (totalConnectedClients >= totalAllowedClients) {
+							updateBadge($navConnDev, 'Max'); // Max
+						} else {
+							updateBadge($navConnDev, obj.statusData.statusBarWiFiClientListSize);
+						}
+					}
+
+					if(typeof obj.statusData.statusBarSmsUnreadCount !== "undefined") {
+						updateBadge($navSMS, obj.statusData.statusBarSmsUnreadCount);
+					}
+				} catch(e) {}
+			}
+		});
+	});
+
+	function updateBadge($el, count)
+	{
+		var theCount = (count) ? count : 0;
+		var linkWrap = $el.find(".linkWrap");
+		$el.find("div.badge").remove();
+		linkWrap.removeClass("roomForBadge");
+		if( (theCount > 0) || isNaN(theCount) ) {
+			linkWrap.addClass("roomForBadge");
+			$el.prepend('<div class="badge">' + theCount + '</div>');
+		}
+	}
+	/* ]]> */
+</script>
+
+
+	<ul id="navigation" class="clearfix">
+	<li class="menuitem menu-home first
+	
+	
+	"><a href="http://192.168.1.1/" class="linkWrap menu-home">Home</a></li>
+	
+
+	
+	<li class="menuitem data-usage
+	
+	
+	"><a href="http://192.168.1.1/datausage/" class="linkWrap data-usage">Data Usage</a></li>
+	
+
+	
+	<li class="menuitem settings parent
+	
+		
+		
+	
+		
+		
+	
+		
+		
+	
+		
+			
+		
+			
+		
+		
+	
+	
+	"><a href="http://192.168.1.1/networks/" class="linkWrap settings parent">Settings</a></li>
+	
+
+	
+	<li class="menuitem gps
+	
+	
+	"><a href="http://192.168.1.1/gps/" class="linkWrap gps">GPS</a></li>
+	
+
+	
+	<li class="menuitem messages
+	
+	
+	"><a href="http://192.168.1.1/messages/" class="linkWrap messages">Messages</a></li>
+	
+
+	
+	<li class="menuitem about parent
+	
+		
+		
+	
+		
+		
+	
+		
+		 active
+	
+		
+		
+	
+	
+	"><a href="http://192.168.1.1/internet/" class="linkWrap about parent">About</a></li>
+	
+
+	
+	<li class="menuitem help parent last
+	
+		
+		
+	
+		
+		
+	
+	
+	"><a href="http://192.168.1.1/faq/" class="linkWrap help parent">Help</a></li>
+	</ul><!-- /#navigation -->
+
+
+							</div>
+						</div> <!-- /#sidebar-->
+
+						<div id="app_container">
+							<div id="app_inner">
+								<noscript>
+	&lt;div id="noscript"&gt;
+		&lt;h1&gt;JavaScript must be Enabled&lt;/h1&gt;
+		&lt;p&gt;JavaScript must be enabled in your browser.&lt;/p&gt;
+	&lt;/div&gt;
+</noscript>
+
+								<div id="app_content">
+									
+ 
+	
+	
+	
+	
+
+	
+	
+	
+ 
+	
+	
+	
+	
+
+	
+	
+	
+ 
+	
+	
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+				
+			
+				
+			
+		
+	
+	 
+		
+	 
+		
+	 
+		
+	 
+		
+	
+
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+			
+		
+	
+ 
+	
+	
+	
+	
+
+	
+	
+	
+ 
+	
+	
+	
+	
+
+	
+	
+	
+ 
+	
+	
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+				
+				<div id="pageHeadRow" class="clearfix">
+					<div id="pageHeadCol">
+						
+							<h1 class="pageHead about parent">About</h1>
+						
+					</div>
+					<a title="About Help" class="helpLink parent" href="http://192.168.1.1/06140637/help/help-en_US.html#status_diagnostics"></a>
+				</div>
+				
+			
+		
+	
+		
+			
+		
+	
+	 
+		
+			 
+				<div class="tabs_container tier_1 tabs_4 ">
+					<div class="tabs clearfix">
+						<ul id="navigationTabsOne">
+			
+							<li class="tabitem status-current first">
+								<a href="http://192.168.1.1/internet/">Internet Status</a>
+							</li>
+			
+		
+	 
+		
+			
+							<li class="tabitem status-info">
+								<a href="http://192.168.1.1/deviceinfo/">Device  Info</a>
+							</li>
+			
+		
+	 
+		
+			
+							<li class="tabitem status-diagnostics active ">
+								<a href="http://192.168.1.1/diagnostics/">Diagnostics</a>
+							</li>
+			
+		
+	 
+		
+			
+							<li class="tabitem status-logs last">
+								<a href="http://192.168.1.1/logs/">Troubleshooting Logs</a>
+							</li>
+			 
+						</ul>
+					</div>
+					<div class="tier_1_content clearfix">
+			
+		
+	
+
+	
+	
+		
+	
+		
+	
+		
+			
+					
+	
+		
+			<script type="text/javascript">
+				/* <![CDATA[ */
+				$(function()
+				{
+					$("#fieldTestBtn").on("click", function(){
+						window.open("/fieldtest/");
+					});
+				});
+				/* ]]> */
+			</script>
+		
+	
+
+	<p class="note">
+		This detailed information is used only for troubleshooting and technical support.
+	</p>
+
+	<fieldset class="first">
+		<h2 class="sectionHead">Modem</h2>
+		<div class="table">
+
+			<div class="row clearfix">
+				<div class="col label">
+					Phone number (MDN):
+				</div>
+				<div class="col textCol" id="modemInfoPhoneNumber">
+					202-631-5705
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col label">
+					IMEI:
+				</div>
+				<div class="col textCol" id="modemInfoIMEI">
+					9900 0092 7983 108
+				</div>
+			</div>
+
+		
+			<div class="row clearfix">
+				<div class="col label">
+					IMEISV:
+				</div>
+				<div class="col textCol" id="modemInfoIMEISV">
+					9900 0092 7983 1000
+				</div>
+			</div>
+		
+
+		
+			<div class="row clearfix">
+				<div class="col label">
+					MEID:
+				</div>
+				<div class="col textCol" id="modemInfoMEID">
+					9900 0092 7983 10
+				</div>
+			</div>
+		
+
+		
+
+			<div class="row clearfix">
+				<div class="col label">
+					FW Version:
+				</div>
+				<div class="col textCol" id="modemInfoFwVersion">
+					9x25MET-2.44.3  1  [2015-05-13 13:56:54]
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col label">
+					SIM Status:
+				</div>
+				<div class="col textCol" id="simStatus">
+					Ready
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col label">
+					ICCID:
+				</div>
+				<div class="col textCol" id="modemInfoICCID">
+					89148000001569391096
+				</div>
+			</div>
+
+		
+			<div class="row clearfix">
+				<div class="col label">
+					MIN (MSID):
+				</div>
+
+				<div class="col textCol" id="modemInfoMSID">
+					2025803911
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col label">
+					ESN:
+				</div>
+				<div class="col textCol" id="modemInfoESN">
+					8079D09D
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col label">
+					Home SID:
+				</div>
+				<div class="col textCol" id="modemInfoHomeSID">
+					18
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col label">
+					ERI Version:
+				</div>
+				<div class="col textCol" id="modemInfoERIVersion">
+					5
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col label">
+					PRL Version:
+				</div>
+				<div class="col textCol" id="modemInfoPRLVersion">
+					15502
+				</div>
+			</div>
+		
+		</div><!-- /.table -->
+	</fieldset>
+
+	
+	<fieldset>
+		<h2 class="sectionHead">4G LTE Network</h2>
+		<div class="table">
+
+			<div class="row clearfix">
+				<div class="col label">
+					Status:
+				</div>
+				<div class="col textCol" id="internetStatus4G">
+					Available
+				</div>
+			</div>
+
+			
+				<div class="row clearfix">
+					<div class="col label">
+						Network Operator:
+					</div>
+					<div class="col textCol" id="internetStatusNetworkOperator4G">
+						Verizon Wireless
+					</div>
+				</div>
+			
+
+			<div class="row clearfix">
+				<div class="col label">
+					Signal strength (RSRP):
+				</div>
+				<div class="col textCol" id="internetStatus4gRSSI">
+					-99 dBm
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col label">
+					SNR:
+				</div>
+				<div class="col textCol" id="internetStatusSNR">
+					4
+				</div>
+			</div>
+			
+				<div class="row clearfix">
+					<div class="col label">
+						Band:
+					</div>
+					<div class="col textCol" id="lteBand">
+						4
+					</div>
+				</div>
+			
+
+			
+				<div class="row clearfix">
+					<div class="col label">
+						Roaming:
+					</div>
+					<div class="col textCol" id="internetStatus4gRoaming">
+						No
+					</div>
+				</div>
+			
+		</div><!-- /.table -->
+	</fieldset>
+	
+
+	
+		<fieldset>
+			<h2 class="sectionHead">GSM/UMTS/HSPA Network</h2>
+			<div class="table">
+				<div class="row clearfix">
+					<div class="col label">
+						Status:
+					</div>
+					<div class="col textCol" id="internetStatus3GhSPA">
+						Not Available
+					</div>
+				</div>
+
+			
+				<div class="row clearfix">
+					<div class="col label">
+						Network Operator:
+					</div>
+					<div class="col textCol" id="internetStatusNetworkOperator">
+						
+					</div>
+				</div>
+			
+
+				<div class="row clearfix">
+					<div class="col label">
+						Technology:
+					</div>
+					<div class="col textCol" id="internetStatusTech">
+						
+					</div>
+				</div>
+
+				<div class="row clearfix">
+					<div class="col label">
+						PLMN ID:
+					</div>
+					<div class="col textCol" id="internetStatusNetworkID">
+						
+					</div>
+				</div>
+
+				<div class="row clearfix">
+					<div class="col label">
+						Cell ID:
+					</div>
+					<div class="col textCol" id="internetStatusCellID">
+						
+					</div>
+				</div>
+
+				<div class="row clearfix">
+					<div class="col label">
+						RSSI:
+					</div>
+					<div class="col textCol" id="internetStatus3gRSSI">
+						
+					</div>
+				</div>
+
+			
+				<div class="row clearfix">
+					<div class="col label">
+						Roaming:
+					</div>
+					<div class="col textCol" id="internetStatus3gRoamingHSPA">
+						
+					</div>
+				</div>
+			
+			</div><!-- /.table -->
+		</fieldset>
+	
+
+	
+		<fieldset>
+			<h2 class="sectionHead">3G Network (eHRPD/EVDO/1xRTT)</h2>
+			<div class="table">
+				<div class="row clearfix">
+					<div class="col label">
+						Status:
+					</div>
+					<div class="col textCol" id="internetStatus3G">
+						Not Available
+					</div>
+				</div>
+
+			
+				
+					<div class="row clearfix">
+						<div class="col buttonCol">
+							<button type="button" id="fieldTestBtn" class="secondary" disabled="disabled">
+								Field Test
+							</button>
+						</div>
+					</div>
+				
+			
+
+				
+					<div class="row clearfix">
+						<div class="col label">
+							Network Operator:
+						</div>
+						<div class="col textCol" id="internetStatusNetworkOperator3G">
+							
+						</div>
+					</div>
+				
+
+				<div class="row clearfix">
+					<div class="col label">
+						RSSI (1X):
+					</div>
+					<div class="col textCol" id="internetStatus3G1xRSSI">
+						
+					</div>
+				</div>
+
+				
+					<div class="row clearfix">
+						<div class="col label">
+							RSSI (EVDO):
+						</div>
+						<div class="col textCol" id="internetStatus3GEVDORSSI">
+							
+						</div>
+					</div>
+				
+
+				
+					<div class="row clearfix">
+						<div class="col label">
+							Technology:
+						</div>
+						<div class="col textCol" id="internetStatus3GTechnology">
+							
+						</div>
+					</div>
+				
+
+				<div class="row clearfix">
+					<div class="col label">
+						Ec/Io:
+					</div>
+					<div class="col textCol" id="internetStatus3gECIo">
+						
+					</div>
+				</div>
+
+				<div class="row clearfix">
+					<div class="col label">
+						SID:
+					</div>
+					<div class="col textCol" id="internetStatus3GSID">
+						
+					</div>
+				</div>
+
+				
+					<div class="row clearfix">
+						<div class="col label">
+							Roaming:
+						</div>
+						<div class="col textCol" id="internetStatus3gRoaming">
+							
+						</div>
+					</div>
+				
+			</div><!-- /.table -->
+		</fieldset>
+	
+
+	
+<!-- isHidden -->
+ 
+				</div>
+			</div>
+			
+		
+	
+		
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+ 
+	
+	
+	
+		
+			
+		
+	
+		
+			
+		
+	
+	 
+		
+	 
+		
+	
+
+	
+	
+		
+	
+		
+	
+	
+		
+	
+		
+	
+
+
+								</div>
+							</div>
+						</div> <!-- /#app_container -->
+
+					</div>  <!-- /#main_inner -->
+				</div> <!-- /#main -->
+
+			</div> <!-- /#container_inner -->
+			<div id="push"></div> <!-- for sticky footer -->
+		</div> <!-- /#container -->
+
+		<div id="footer">
+	<div id="footer_inner">
+		<div id="logo_device">
+			<a id="nvtlLogo" href="http://www.novatelwireless.com/" title="Novatel Wireless">
+				<img src="./mifi_files/novatel_wireless.png" alt="Novatel Wireless">
+			</a>
+
+			<div id="mifiDevice">
+				<img src="./mifi_files/bottom_logo-en_US.png" alt="MiFi by Novatel Wireless" title="MiFi by Novatel Wireless">
+			</div>
+		</div><!-- /#logo_device -->
+
+		<div id="copyright">
+			Copyright ©2015. Novatel Wireless, Inc. All rights reserved. MiFi is a registered trademark of Novatel Wireless, the creators and patent holders of MiFi.
+		</div><!-- /#copyright -->
+	</div><!-- /#footer_inner -->
+</div><!-- /#footer -->
+
+	
+</body></html>
